@@ -89,9 +89,7 @@ def train(hp):
               epochs=hp.n_epochs,
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
-              output_path=hp.model_fn,
-              fp16=hp.fp16,
-              fp16_opt_level='O2')
+              output_path=hp.model_fn)
 
 
 if __name__=="__main__":
@@ -103,7 +101,7 @@ if __name__=="__main__":
     parser.add_argument("--n_epochs", type=int, default=20)
     parser.add_argument("--logdir", type=str, default="checkpoints/")
     parser.add_argument("--lm", type=str, default='distilbert')
-    parser.add_argument("--fp16", dest="fp16", action="store_true")
     hp = parser.parse_args()
 
     train(hp)
+
