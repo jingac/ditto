@@ -4,6 +4,9 @@ import json
 import sys
 import math
 
+# Disable Weights & Biases
+os.environ["WANDB_DISABLED"] = "true"
+
 sys.path.insert(0, "sentence-transformers")
 
 from sentence_transformers.readers import InputExample
@@ -14,8 +17,7 @@ from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator
 from torch.utils.data import DataLoader
 
 class Reader:
-    """A simple reader class for the matching datasets.
-    """
+    """A simple reader class for the matching datasets."""
     def __init__(self):
         self.guid = 0
 
@@ -29,9 +31,12 @@ class Reader:
             self.guid += 1
         return examples
 
+def on_epoch_end(epoch, logs):
+    """Callback function to print logs after each epoch."""
+    print(f"Epoch {epoch + 1}: loss={logs['loss']}, accuracy={logs.get('accuracy', 'N/A')}")
+
 def train(hp):
-    """Train the advanced blocking model
-    Store the trained model in hp.model_fn.
+    """Train the advanced blocking model and store the trained model in hp.model_fn.
 
     Args:
         hp (Namespace): the hyperparameters
@@ -39,7 +44,7 @@ def train(hp):
     Returns:
         None
     """
-    # define model
+    # Define model
     model_names = {'distilbert': 'distilbert-base-uncased',
                    'bert': 'bert-base-uncased',
                    'albert': 'albert-base-v2' }
@@ -47,13 +52,13 @@ def train(hp):
     word_embedding_model = models.Transformer(model_names[hp.lm])
     pooling_model = models.Pooling(word_embedding_model\
                                    .get_word_embedding_dimension(),
-				   pooling_mode_mean_tokens=True,
-				   pooling_mode_cls_token=False,
-				   pooling_mode_max_tokens=False)
+                                   pooling_mode_mean_tokens=True,
+                                   pooling_mode_cls_token=False,
+                                   pooling_mode_max_tokens=False)
 
     model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
-    # load the training and validation data
+    # Load the training and validation data
     reader = Reader()
     trainset = SentencesDataset(examples=reader.get_examples(hp.train_fn),
                                 model=model)
@@ -77,7 +82,7 @@ def train(hp):
                                              scores=dev_scores)
 
     warmup_steps = math.ceil(len(train_dataloader) \
-            * hp.n_epochs / hp.batch_size * 0.1) #10% of train data for warm-up
+            * hp.n_epochs / hp.batch_size * 0.1) # 10% of train data for warm-up
 
     if os.path.exists(hp.model_fn):
         import shutil
@@ -89,8 +94,8 @@ def train(hp):
               epochs=hp.n_epochs,
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
-              output_path=hp.model_fn)
-
+              output_path=hp.model_fn,
+              callbacks=[on_epoch_end])  # Add the callback for logging
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
@@ -104,4 +109,3 @@ if __name__=="__main__":
     hp = parser.parse_args()
 
     train(hp)
-
