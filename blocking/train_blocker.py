@@ -31,10 +31,6 @@ class Reader:
             self.guid += 1
         return examples
 
-def on_epoch_end(epoch, logs):
-    """Callback function to print logs after each epoch."""
-    print(f"Epoch {epoch + 1}: loss={logs['loss']}, accuracy={logs.get('accuracy', 'N/A')}")
-
 def train(hp):
     """Train the advanced blocking model and store the trained model in hp.model_fn.
 
@@ -88,14 +84,16 @@ def train(hp):
         import shutil
         shutil.rmtree(hp.model_fn)
 
-    # Train the model
-    model.fit(train_objectives=[(train_dataloader, train_loss)],
-              evaluator=evaluator,
-              epochs=hp.n_epochs,
-              evaluation_steps=1000,
-              warmup_steps=warmup_steps,
-              output_path=hp.model_fn,
-              callbacks=[on_epoch_end])  # Add the callback for logging
+    # Train the model with manual logging
+    for epoch in range(hp.n_epochs):
+        model.fit(train_objectives=[(train_dataloader, train_loss)],
+                  evaluator=evaluator,
+                  epochs=1,
+                  evaluation_steps=1000,
+                  warmup_steps=warmup_steps,
+                  output_path=hp.model_fn)
+        
+        print(f"Epoch {epoch + 1}/{hp.n_epochs} completed.")
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
