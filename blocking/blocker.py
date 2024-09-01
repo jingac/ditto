@@ -85,7 +85,7 @@ def dump_pairs(out_fn, entries_a, entries_b, pairs):
     """
     with jsonlines.open(out_fn, mode='w') as writer:
         for idx_a, idx_b, score in pairs:
-            writer.write(entries_b[idx_b], [entries_a[idx_a], str(score)])
+            writer.write([entries_b[idx_b], entries_a[idx_a], str(score)])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
