@@ -102,8 +102,10 @@ if __name__ == "__main__":
     # load the model
     # Check if using a pre-trained model or an untrained model
     model_names = {'distilbert': 'distilbert-base-uncased',
-                'bert': 'bert-base-uncased',
-                'albert': 'albert-base-v2' }
+               'bert': 'bert-base-uncased',
+               'albert': 'albert-base-v2',
+               'xlm-roberta': 'xlm-roberta-base'}
+  
 
     if hp.model_fn in model_names:
         # Use an untrained model
