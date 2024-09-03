@@ -41,9 +41,11 @@ def train(hp):
         None
     """
     # Define model
+    # Update the model loading section
     model_names = {'distilbert': 'distilbert-base-uncased',
-                   'bert': 'bert-base-uncased',
-                   'albert': 'albert-base-v2' }
+               'bert': 'bert-base-uncased',
+               'albert': 'albert-base-v2',
+               'xlm-roberta': 'xlm-roberta-base'}
 
     word_embedding_model = models.Transformer(model_names[hp.lm])
     pooling_model = models.Pooling(word_embedding_model\
