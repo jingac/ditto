@@ -8,6 +8,22 @@
     "testset": "data/wdc/all/test.txt"
   },
   {
+    "name": "small_trans_sanct_relatednames",
+    "task_type": "classification",
+    "vocab": ["0", "1"],  
+    "trainset": "data/small-trans-sanct-relatednames/train.txt",
+    "validset": "data/small-trans-sanct-relatednames/valid.txt",
+    "testset": "data/small-trans-sanct-relatednames/test.txt"
+  },
+  {
+    "name": "trans_sanct_relatednames",
+    "task_type": "classification",
+    "vocab": ["0", "1"],  
+    "trainset": "data/trans-sanct-relatednames/train.txt",
+    "validset": "data/trans-sanct-relatednames/valid.txt",
+    "testset": "data/trans-sanct-relatednames/test.txt"
+  },
+  {
     "name": "small_random_order_trans_sanct",
     "task_type": "classification",
     "vocab": ["0", "1"],  
