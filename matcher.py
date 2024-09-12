@@ -15,7 +15,7 @@ import traceback
 
 from torch.utils import data
 from tqdm import tqdm
-from apex import amp
+# from apex import amp
 from scipy.special import softmax
 
 from ditto_light.ditto import evaluate, DittoModel
@@ -224,7 +224,20 @@ def tune_threshold(config, model, hp):
 
     # acc, prec, recall, f1, v_loss, th = eval_classifier(model, valid_iter,
     #                                                     get_threshold=True)
-    f1, th = evaluate(model, valid_iter, threshold=None)
+    # f1, th = evaluate(model, valid_iter, threshold=None)
+    # Call the evaluate function and get the results dictionary
+    evaluation_results = evaluate(model, valid_iter, threshold=None)
+    
+    # Extract the F1 score and threshold from the results
+    f1 = evaluation_results['f1']
+    th = evaluation_results.get('threshold', None)  # use get to avoid KeyError if 'threshold' is not in the dictionary
+    
+    # If other metrics are needed:
+    # precision = evaluation_results.get('precision', None)
+    # recall = evaluation_results.get('recall', None)
+    
+    # Now you can use f1, threshold, precision, and recall as needed
+
 
     # verify F1
     set_seed(123)
@@ -254,7 +267,7 @@ def tune_threshold(config, model, hp):
 
 
 
-def load_model(task, path, lm, use_gpu, fp16=True):
+def load_model(task, path, lm, use_gpu, fp16=False):
     """Load a model for a specific task.
 
     Args:
