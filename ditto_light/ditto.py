@@ -16,7 +16,8 @@ from tensorboardX import SummaryWriter
 # from apex import amp
 
 lm_mp = {'roberta': 'roberta-base',
-         'distilbert': 'distilbert-base-uncased'}
+         'distilbert': 'distilbert-base-uncased',
+         'bert': 'bert-base-uncased'}
 
 class DittoModel(nn.Module):
     """A baseline model for EM."""
@@ -227,13 +228,15 @@ def train(trainset, validset, testset, run_tag, hp):
                  
             if hp.save_model:
                 # create the directory if not exist
-                directory = os.path.join(hp.logdir, hp.task)
+                directory = os.path.join(hp.logdir, hp.task, hp.lm)
+                # directory = os.path.join(hp.logdir, hp.task)
                 # directory = os.path.join(hp.logdir, run_tag)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
                 # save the checkpoints for each component
-                ckpt_path = os.path.join(hp.logdir, hp.task, 'model.pt')
+                ckpt_path = os.path.join(directory, 'model.pt')
+                # ckpt_path = os.path.join(hp.logdir, hp.task, 'model.pt')
                 ckpt = {'model': model.state_dict(),
                         'optimizer': optimizer.state_dict(),
                         'scheduler': scheduler.state_dict(),
